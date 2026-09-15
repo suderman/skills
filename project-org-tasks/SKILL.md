@@ -6,11 +6,12 @@ description: >
   where a project may reference zero, one, or many repositories. Creates or
   resumes task threads, tracks scope, checklists, follow-ups, verification, and
   TODO state, and uses dated task subdirectories for client-provided files and
-  other task-specific working material. Use during implementation, debugging,
-  refactoring, actionable reviews, explicit project ideas, and other substantive
-  work that should persist across sessions. Skip quick informational questions,
-  read-only lookups, isolated commands, and trivial edits unless the user asks
-  to track them.
+  other task-specific working material. Inspects those materials as source
+  context without treating them as canonical planning records. Use during
+  implementation, debugging, refactoring, actionable reviews, explicit project
+  ideas, and other substantive work that should persist across sessions. Skip
+  quick informational questions, read-only lookups, isolated commands, and
+  trivial edits unless the user asks to track them.
 license: MIT
 ---
 
@@ -48,7 +49,7 @@ The user's active working information lives under:
 A domain groups related work. For example:
 
 ```text
-~/org/work/nonfiction/
+~/org/work/studio/
 ```
 
 Within a domain:
@@ -62,24 +63,23 @@ Within a domain:
 Example:
 
 ```text
-~/org/work/nonfiction/
-├── bcrc.org
-├── cnrl.org
-├── beefresearch/
-│   ├── beefresearch.org
-│   └── 2026-09-14-economic-value-of-feeds/
-└── upick/
-    ├── upick.org
-    └── 2026-09-20-update-cattle-selector/
+~/org/work/studio/
+├── northwind.org
+├── atlas/
+│   ├── atlas.org
+│   └── 2026-09-14-import-product-feed/
+└── portal/
+    ├── portal.org
+    └── 2026-09-20-update-language-selector/
 ```
 
 Here:
 
-- `bcrc.org` is a client-level file.
-- `beefresearch/beefresearch.org` is a project file.
-- `upick/upick.org` is a project file.
-- `2026-09-14-economic-value-of-feeds/` contains files belonging specifically
-  to that task.
+- `northwind.org` is a client-level file.
+- `atlas/atlas.org` is a project file.
+- `portal/portal.org` is a project file.
+- `2026-09-14-import-product-feed/` contains files belonging specifically to
+  that task.
 
 Do not confuse a direct child client Org file with a project Org file.
 
@@ -106,6 +106,8 @@ Do not confuse a direct child client Org file with a project Org file.
   ~/src/<github-owner-or-org>/<repository>
   ```
 
+- Repository-local `work/` directories are not part of this system. Do not look
+  for, create, or use `<repo>/work/` as a task source or destination.
 - Every first-level heading in a project file is one task, idea, bug, feature,
   or continuing work thread.
 - Never create a broad first-level heading such as "Maintain this project" and
@@ -137,17 +139,20 @@ Resolve the logical project before creating or editing a project file.
    `~/org/work/<namespace>/<repository>/<repository>.org` is a strong default
    match.
 9. Do not insert a client name into the source repository path. For example, a
-   BCRC project may use:
+   project for client Northwind may use:
 
    ```text
-   ~/src/nonfiction/upick
-   ~/src/nonfiction/upickfr
+   ~/src/studio/portal
+   ~/src/studio/portal-fr
    ```
 
-   even though the project belongs to client BCRC.
+   even though the client name does not appear in either source path.
 
 10. If no reliable project mapping exists, do not invent a hierarchy merely
     from repository ownership. Ask for the logical project when necessary.
+
+Do not search for legacy repository-local `work/` folders while resolving a
+project. Their presence does not identify the canonical project or task record.
 
 Read the existing project file before every edit. If it changed during the
 session, preserve and merge the new content. Stop and ask only when concurrent
@@ -159,7 +164,7 @@ A direct child Org file under a domain represents client-level information or
 work:
 
 ```text
-~/org/work/nonfiction/bcrc.org
+~/org/work/studio/northwind.org
 ```
 
 Use a client file for information and tasks that belong to the client generally
@@ -171,13 +176,13 @@ the project's filesystem path.
 For example:
 
 ```text
-~/org/work/nonfiction/bcrc.org
-~/org/work/nonfiction/beefresearch/beefresearch.org
-~/org/work/nonfiction/upick/upick.org
+~/org/work/studio/northwind.org
+~/org/work/studio/atlas/atlas.org
+~/org/work/studio/portal/portal.org
 ```
 
-Both BeefResearch and Upick may belong to BCRC without being nested beneath a
-`bcrc/` directory.
+Both Atlas and Portal may belong to Northwind without being nested beneath a
+`northwind/` directory.
 
 Do not create, modify, or reorganize a client file merely because a project
 belongs to that client. Update client-level information only when the current
@@ -189,35 +194,37 @@ Create a project file only when substantive project work begins, the user asks
 to capture an idea, or the logical project has otherwise been clearly
 established.
 
-Use this general shape:
+Use this general shape for a project with multiple repositories:
 
 ```org
-#+TITLE: Upick
-#+CATEGORY: upick
+#+TITLE: Portal
+#+CATEGORY: portal
 
-Client: [[file:../bcrc.org][BCRC]]
+Client: [[file:../northwind.org][Northwind]]
 
 Repositories:
-- upick: [[file:../../../../src/nonfiction/upick/][local]] | [[https://github.com/nonfiction/upick][GitHub]]
-- upickfr: [[file:../../../../src/nonfiction/upickfr/][local]] | [[https://github.com/nonfiction/upickfr][GitHub]]
+- portal: [[file:~/src/studio/portal/][local]] | [[https://github.com/studio/portal][GitHub]]
+- portalfr: [[file:~/src/studio/portalfr/][local]] | [[https://github.com/studio/portalfr][GitHub]]
 ```
 
 For a project with one repository:
 
 ```org
-#+TITLE: BeefResearch
-#+CATEGORY: beef
+#+TITLE: Atlas
+#+CATEGORY: atlas
 
-Client: [[file:../bcrc.org][BCRC]]
+Client: [[file:../northwind.org][Northwind]]
 
 Repositories:
-- beefresearch: [[file:../../../../src/nonfiction/beefresearch/][local]] | [[https://github.com/nonfiction/beefresearch][GitHub]]
+- atlas: [[file:~/src/studio/atlas/][local]] | [[https://github.com/studio/atlas][GitHub]]
 ```
 
 Apply these rules:
 
-- Make local repository links relative to the project file when practical so
-  they remain portable with the user's home directory.
+- Use home-relative `file:~/src/...` links for repositories. Do not construct
+  long `../../..` paths from the Org work tree.
+- Use ordinary relative links for resources within the same Org work hierarchy
+  when they are clearer, such as `[[file:../northwind.org][Northwind]]`.
 - Repository links must point to the repository's real location under `~/src`;
   never alter that path merely to mirror the client or project hierarchy.
 - Read each repository's `origin` remote when available.
@@ -227,8 +234,8 @@ Apply these rules:
   one.
 - List every repository that is genuinely part of the logical project.
 - Do not create duplicate project files for secondary repositories. For
-  example, `upick` and `upickfr` belong in one `upick.org` project record when
-  they are always managed as one workstream.
+  example, `portal` and `portalfr` belong in one `portal.org` project record
+  when they are managed as one workstream.
 - Omit the `Repositories` section for a project with no source repositories.
 - When a matching client file exists, link to it.
 - If the client is known but no client file exists, record the client name only
@@ -254,14 +261,14 @@ Use this form:
 Example:
 
 ```text
-~/org/work/nonfiction/beefresearch/
-├── beefresearch.org
-└── 2026-09-14-economic-value-of-feeds/
+~/org/work/studio/atlas/
+├── atlas.org
+└── 2026-09-14-import-product-feed/
     ├── client-email.eml
-    ├── nutrient-data.xlsx
+    ├── product-data.xlsx
     ├── supplied-copy.docx
     ├── screenshot.png
-    └── quote-review.org
+    └── review-notes.org
 ```
 
 These directories are working-material dropzones. Appropriate contents include:
@@ -295,10 +302,58 @@ Apply these rules:
   `DONE`. Archiving and long-term file retention are separate workflows.
 - Preserve existing filenames unless renaming materially improves the workflow
   or the user asks.
+- Never create or fall back to a repository-local `<repo>/work/` directory.
+  Task material belongs under the canonical project directory in `~/org/work/`.
 
 When the project already uses an explicit Org property or link to associate a
 task with its directory, preserve and update that convention rather than
 inventing a second one.
+
+## Working with task materials
+
+Treat files in a task working directory as source material for the active task.
+
+Before implementing work that depends on supplied material:
+
+1. Inspect the relevant files in the task directory.
+2. If a `README.md`, notes file, or other obvious summary already exists, read
+   it first, but do not assume it contains everything important.
+3. Determine the actual request, constraints, clarifications, and unresolved
+   questions from the available source material.
+4. Inspect the relevant source repositories and project documentation needed to
+   understand the task.
+5. Implement the requested work.
+6. Verify the result using the project's normal tests, checks, build process,
+   or focused manual verification.
+
+Client-provided emails, screenshots, documents, spreadsheets, exports, and
+other imported files are inputs. Do not modify them unless the user explicitly
+asks.
+
+Do not assume that a summary, task heading, email subject, or README fully
+captures the request when original source material is available.
+
+If source materials conflict or leave an important requirement ambiguous,
+record or report the conflict instead of silently choosing an interpretation.
+
+Do not create additional planning, status, summary, or README files merely to
+document agent activity. The task heading in the canonical project Org file is
+the primary planning and status record. Create a separate supporting document
+only when it is genuinely useful to the work or the user asks for one.
+
+Task directories may be retained as historical source material, but they are
+not the sole home for durable knowledge. When completing a task reveals
+information that future work should retain:
+
+- record project-level knowledge in the project Org file;
+- record client-level knowledge in the appropriate client Org file when it
+  genuinely applies across projects;
+- record repository-specific technical knowledge in the repository's normal
+  documentation when appropriate.
+
+Promoting durable knowledge does not mean deleting or rewriting the original
+task materials. Preserve source material unless the user explicitly asks for
+cleanup or modification.
 
 ## Task states
 
@@ -333,6 +388,8 @@ At the beginning of substantive work:
    unfold.
 7. If task-specific client or reference files are involved, find or create the
    matching dated task directory and use it consistently.
+8. When a matching task directory already contains source material, inspect the
+   relevant material before making implementation decisions.
 
 Example:
 
@@ -359,20 +416,20 @@ explain the work, not the agent.
 
 Treat repository count as an implementation detail of the logical project.
 
-For example, Upick is one project even though implementation occurs in two
+For example, Portal is one project even though implementation occurs in two
 repositories:
 
 ```text
-~/org/work/nonfiction/upick/upick.org
+~/org/work/studio/portal/portal.org
 
-~/src/nonfiction/upick
-~/src/nonfiction/upickfr
+~/src/studio/portal
+~/src/studio/portalfr
 ```
 
 A single task such as:
 
 ```org
-* PROG Update cattle selector behaviour
+* PROG Update language selector behaviour
 ```
 
 may require equivalent changes and verification in both repositories.
@@ -385,7 +442,7 @@ For multi-repository work:
   verification when that distinction matters.
 - Verify all required repositories before considering the task complete.
 - Record relevant commits or pull requests from each repository when useful.
-- Do not create `upickfr.org` merely because `upickfr` is a separate Git
+- Do not create `portalfr.org` merely because `portalfr` is a separate Git
   repository.
 
 ## Maintain the active thread
@@ -405,6 +462,8 @@ For multi-repository work:
   they make the thread easier to resume.
 - Refer to task working files instead of unnecessarily transcribing their full
   contents into the project record.
+- Preserve useful distinctions between what the user or client supplied, what
+  the agent inferred, and what was verified in the repository.
 - Never put credentials, tokens, private keys, secret command output, or other
   secrets into the project file.
 
@@ -418,17 +477,19 @@ Before reporting completion:
 
 1. Re-read the active project thread.
 2. Re-read the relevant source state in every repository involved.
-3. Check only items supported by completed work or verification.
-4. Record the focused tests, builds, manual checks, or other evidence that
+3. Re-check relevant supplied task materials when they define acceptance
+   criteria, constraints, or requested behavior.
+4. Check only items supported by completed work or verification.
+5. Record the focused tests, builds, manual checks, or other evidence that
    proves the outcome.
-5. Set the heading to `DONE`, `EVAL`, or `HOLD` according to its actual state.
-6. Add a separate first-level `TODO` for independent residual work.
-7. Remove stale statements such as "pending commit" after that event occurs.
-8. If the session creates commits or pull requests, record their identifiers
+6. Set the heading to `DONE`, `EVAL`, or `HOLD` according to its actual state.
+7. Add a separate first-level `TODO` for independent residual work.
+8. Remove stale statements such as "pending commit" after that event occurs.
+9. If the session creates commits or pull requests, record their identifiers
    after success.
-9. Do not make commits or pull requests a prerequisite for `DONE`.
-10. Leave task working directories intact unless the user explicitly asks for
-    cleanup or archival changes.
+10. Do not make commits or pull requests a prerequisite for `DONE`.
+11. Leave task working directories and supplied source material intact unless
+    the user explicitly asks for cleanup or archival changes.
 
 Do not claim the project record is synchronized until this final pass is done.
 
@@ -443,6 +504,9 @@ remain separate.
   part of source repository work.
 - Git operations belong to the actual repository roots under `~/src` or another
   explicitly identified source location.
+- Do not use repository-local `work/` directories as project or task storage.
+- Do not scan repositories for legacy `work/` directories as part of normal
+  project discovery or task startup.
 - Editing one project file does not grant permission to modify unrelated
   project or client Org files.
 - Do not reorganize `~/src` to make it resemble `~/org/work`.
@@ -464,7 +528,8 @@ Prefer a small, accurate project record over ceremonial project management.
 
 If substantive work reveals a real follow-up, capture it when it belongs to the
 active project and will matter later. Do not manufacture tasks, directories,
-client records, or project hierarchy merely to satisfy the structure.
+client records, project hierarchy, READMEs, or status documents merely to
+satisfy the structure.
 
 The filesystem should reflect the work the user actually has, not an idealized
 one-to-one relationship between clients, projects, tasks, and repositories.
