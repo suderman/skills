@@ -115,7 +115,9 @@ Do not confuse a direct child client Org file with a project Org file.
 - Preserve user-written headings and prose. Extend the matching thread instead
   of replacing it or creating a duplicate.
 - Track all meaningful work required by the active thread. Split an independent
-  follow-up into its own first-level heading.
+  follow-up into its own first-level heading. Staging, committing, and pushing
+  are not independent project tasks; never create a first-level heading for
+  them alone.
 
 ## Find the project file
 
@@ -367,6 +369,13 @@ Use the user's Org workflow consistently:
 - `DONE`: requested work is complete and verified.
 
 Verification, not a commit or push, is the threshold for `DONE`.
+
+If the user later asks only to stage, commit, or push completed work, do not
+reopen the completed task or create a new heading for those Git operations.
+Record resulting commit or pull request identifiers in the relevant existing
+task threads, even when one Git request covers several tasks. Include a
+publication checklist item in an active task only when it is useful to the
+larger work.
 
 Do not leave a thread in `PROG` merely because source changes are uncommitted.
 Never mark a required unchecked item complete without evidence. If unfinished
